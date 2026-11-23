@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- EDIT: judul tab browser dan deskripsi untuk mesin pencari -->
+  <title>Grand Babat Regency</title>
+  <meta name="description" content="Grand Babat Regency Admin.">
+  <meta property="og:title" content="Grand Babat Regency">
+  <meta property="og:description" content="Grand Babat Regency Admin.">
+  <meta property="og:type" content="website">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Lewati ke konten utama</a>
+
+  <!-- EDIT: judul halaman untuk pembaca layar (tidak terlihat) -->
+  <h1 class="visuallyhidden">Grand Babat Regency</h1>
+
+
+  <!-- ======================================================================
+       SEGMEN 1: HEADER DAN NAVIGASI
+       Perilaku (diatur script.js):
+         - Desktop: logo, daftar menu dengan dropdown interaktif (hover/klik),
+           ikon cari.
+         - Mobile (<= 833px): daftar menu disembunyikan. Tombol hamburger
+           membuka panel menu layar penuh dengan submenu bertingkat + tombol kembali.
+         - Esc atau klik area gelap menutup dropdown, menu, dan pencarian.
+       ====================================================================== -->
+  <header class="site-header">
+    <nav class="nav" aria-label="Navigasi utama">
+
+      <div class="nav-bar">
+        <!-- Tombol kembali submenu (hanya tampil di mobile saat submenu terbuka) -->
+        <button class="nav-back" type="button" aria-label="Kembali ke menu">
+          <svg viewBox="0 0 9 16" aria-hidden="true" focusable="false"><path d="M7.5 1.5L1.5 8l6 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- EDIT: logo. Teks bisa diganti <img src="logo.svg" alt="Nama Situs" height="20"> -->
+        <img src="DATS.png" alt="GrandBabatRegency" height="20">
+
+        <!-- EDIT: item menu + dropdown. Tambahkan <div class="nav-dropdown"> di dalam
+             <li class="nav-item"> untuk menu yang memiliki dropdown. -->
+        <ul class="nav-list" id="nav-list">
+          <li class="nav-item">
+            <a class="nav-link" href="#" aria-expanded="false" aria-controls="nav-dropdown-1">Keuangan</a>
+            <div class="nav-dropdown" id="nav-dropdown-1" role="region" aria-label="Submenu Menu 1">
+              <div class="nav-dropdown-inner">
+                <div class="nav-dropdown-group is-elevated">
+                  <h2 class="nav-dropdown-title">Jelajahi Keuangan</h2>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Akunting</a></li>
+                    <li><a href="#">Arus Kas Operasional</a></li>
+                    <li><a href="#">Pembayaran User</a></li>
+                    <li><a href="#">Buku Neraca</a></li>
+                    <li><a href="#">Backup Nota User</a></li>
+                    <li><a href="#">Cost Control</a></li>
+                    <li><a href="#">Admin Keuangan</a></li>
+                    <li><a href="#">Income Total</a></li>
+                  </ul>
+                </div>
+                <div class="nav-dropdown-group">
+                  <h2 class="nav-dropdown-title">Administrasi Keuangan</h2>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Laporan Bulanan</a></li>
+                    <li><a href="#">Kas Operasional</a></li>
+                  </ul>
+                </div>
+                <div class="nav-dropdown-group">
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" aria-expanded="false" aria-controls="nav-dropdown-2">Project</a>
+            <div class="nav-dropdown" id="nav-dropdown-2" role="region" aria-label="Submenu Menu 2">
+              <div class="nav-dropdown-inner">
+                <div class="nav-dropdown-group">
+                  <h1 class="nav-dropdown-title">Laporan Mingguan</h1>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Progress Rumah</a></li>
+                    <li><a href="#">Progress Saluran</a></li>
+                    <li><a href="#">Progress RTH</a></li>
+                  </ul>
+                </div>
+                <div class="nav-dropdown-group">
+                  <h1 class="nav-dropdown-title">Dokumentasi Project</h1>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">P58</a></li>
+                  </ul>
+                </div>
+                <div class="nav-dropdown-group">
+                  <h1 class="nav-dropdown-title">Tagihan</h1>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Data Urug</a></li>
+                    <li><a href="#">Yoga Putra</a></li>
+                    <li><a href="#">Toko 3</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" aria-expanded="false" aria-controls="nav-dropdown-3">Marketing</a>
+            <div class="nav-dropdown" id="nav-dropdown-3" role="region" aria-label="Submenu Menu 3">
+              <div class="nav-dropdown-inner">
+                <div class="nav-dropdown-group is-elevated">
+                  <h2 class="nav-dropdown-title">Jelajahi Marketing</h2>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Web Marketing</a></li>
+                    <li><a href="#">Berkas User</a></li>
+                    <li><a href="#">Site Plan Plotting</a></li>
+                    <li><a href="#">Data Visor</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" aria-expanded="false" aria-controls="nav-dropdown-4">Gudang</a>
+            <div class="nav-dropdown" id="nav-dropdown-4" role="region" aria-label="Submenu Menu 4">
+              <div class="nav-dropdown-inner">
+                <div class="nav-dropdown-group is-elevated">
+                  <h2 class="nav-dropdown-title">Jelajahi Gudang</h2>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Indul & Projek</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" aria-expanded="false" aria-controls="nav-dropdown-6">SDM</a>
+            <div class="nav-dropdown" id="nav-dropdown-6" role="region" aria-label="Submenu Menu 6">
+              <div class="nav-dropdown-inner">
+                <div class="nav-dropdown-group is-elevated">
+                  <h2 class="nav-dropdown-title">Jelajahi SDM</h2>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Pelindung &amp; Casing</a></li>
+                    <li><a href="#">Pengisi Daya</a></li>
+                    <li><a href="#">Kabel &amp; Adaptor</a></li>
+                  </ul>
+                </div>
+                <div class="nav-dropdown-group">
+                  <h2 class="nav-dropdown-title">Koleksi</h2>
+                  <ul class="nav-dropdown-links">
+                    <li><a href="#">Koleksi Terbaru</a></li>
+                    <li><a href="#">Rekomendasi</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+
+
+        <!-- Tombol pencarian. Hapus tombol ini dan segmen "Flyout pencarian" di bawah
+             jika situs tidak memerlukan pencarian. -->
+        <button class="nav-search-toggle" type="button" aria-label="Cari"
+                aria-expanded="false" aria-controls="nav-search">
+          <svg viewBox="0 18 17 17" aria-hidden="true" focusable="false"><path d="m16.2294 29.9556-4.1755-4.0821a6.4711 6.4711 0 1 0 -1.2839 1.2625l4.2005 4.1066a.9.9 0 1 0 1.2588-1.287zm-14.5294-8.0017a5.2455 5.2455 0 1 1 5.2455 5.2527 5.2549 5.2549 0 0 1 -5.2455-5.2527z"/></svg>
+        </button>
+
+        <!-- Tombol hamburger (hanya tampil di mobile) -->
+        <button class="nav-menu-toggle" type="button" aria-label="Menu"
+                aria-expanded="false" aria-controls="nav-list">
+          <span></span><span></span>
+        </button>
+      </div>
+
+      <!-- Flyout pencarian (dropdown di bawah bar) -->
+      <div class="nav-search" id="nav-search" role="search">
+        <!-- EDIT: action = alamat halaman hasil pencarian Anda -->
+        <form action="#" method="get">
+          <div class="nav-search-field">
+            <svg viewBox="0 18 17 17" aria-hidden="true" focusable="false"><path d="m16.2294 29.9556-4.1755-4.0821a6.4711 6.4711 0 1 0 -1.2839 1.2625l4.2005 4.1066a.9.9 0 1 0 1.2588-1.287zm-14.5294-8.0017a5.2455 5.2455 0 1 1 5.2455 5.2527 5.2549 5.2549 0 0 1 -5.2455-5.2527z"/></svg>
+            <!-- EDIT: placeholder dan aria-label kolom pencarian -->
+            <input class="nav-search-input" type="search" name="q"
+                   placeholder="Cari di situs ini" aria-label="Cari di situs ini"
+                   autocomplete="off" autocapitalize="off" autocorrect="off">
+          </div>
+        </form>
+
+      <!-- Lapisan gelap di belakang flyout/dropdown. Jangan dihapus. -->
+      <div class="nav-curtain"></div>
+    </nav>
+  </header>
+
+
+  <main class="main" id="main">
+
+    <!-- ====================================================================
+         SEGMEN 2: HERO
+         Tile besar satu kolom. Salin blok <div class="tile-wrapper"> untuk
+         menambah tile. Tambahkan class "theme-dark" untuk latar gelap.
+         ==================================================================== -->
+    <section class="section section-hero">
+
+    <!-- Tile "hero-1". Latar terang. -->
+    <div class="tile-wrapper">
+      <!-- EDIT: href = tujuan klik di seluruh tile. Hapus baris ini jika tidak perlu. -->
+      <a class="tile-link" href="#" aria-hidden="true" tabindex="-1"></a>
+      <div class="tile-content">
+        <!-- EDIT: judul dan deskripsi tile -->
+        <h2 class="tile-headline">Grand Babat Regency</h2>
+        <p class="tile-subhead"></p>
+        <!-- EDIT: teks tambahan kecil (boleh dikosongkan) -->
+        <p class="tile-callout">Elegant, exclusive living experience.</p>
+        <!-- EDIT: teks dan tujuan tombol. Hapus satu <a> jika hanya perlu satu tombol. -->
+        <div class="tile-ctas">
+          <a class="button" href="#">More</a>
+            <a class="button button-secondary" href="#">Buy</a>
+        </div>
+      </div>
+      <div class="tile-image-wrapper">
+        <!-- EDIT: gambar tile. Ganti <div class="placeholder"> dengan:
+          <img src="gambar.jpg" alt="Deskripsi gambar"> -->
+        <img src="img/img1.webp" alt="Deskripsi gambar">
+      </div>
+    </div>
+    <!-- Tile "hero-2". Latar gelap. -->
+    <div class="tile-wrapper theme-dark">
+      <!-- EDIT: href = tujuan klik di seluruh tile. Hapus baris ini jika tidak perlu. -->
+      <a class="tile-link" href="#" aria-hidden="true" tabindex="-1"></a>
+      <div class="tile-content">
+        <!-- EDIT: judul dan deskripsi tile -->
+        <h2 class="tile-headline">Luxury in Babat</h2>
+        <p class="tile-subhead"></p>
+        <!-- EDIT: teks tambahan kecil (boleh dikosongkan) -->
+        <p class="tile-callout">True Definition of Luxury</p>
+        <!-- EDIT: teks dan tujuan tombol. Hapus satu <a> jika hanya perlu satu tombol. -->
+        <div class="tile-ctas">
+          <a class="button" href="#">More</a>
+            <a class="button button-secondary" href="#">Buy</a>
+        </div>
+      </div>
+      <div class="tile-image-wrapper">
+        <!-- EDIT: gambar tile. Ganti <div class="placeholder"> dengan:
+          <img src="gambar.jpg" alt="Deskripsi gambar"> -->
+        <img src="img/img2.webp" alt="Deskripsi gambar">
+      </div>
+    </div>
+    </section>
+
+
+    <!-- ====================================================================
+         SEGMEN 3: PROMO
+         Grid dua kolom di desktop, satu kolom di mobile. Jumlah tile sebaiknya
+         genap agar baris terakhir tidak kosong sebelah.
+         ==================================================================== -->
+   
+
+    <!-- ====================================================================
+         SEGMEN 4: GALERI (carousel)
+         Fungsi: putar otomatis, titik navigasi, tombol putar/jeda, panah
+         keyboard, geser sentuh.
+         EDIT: durasi putar otomatis dalam milidetik di data-autoplay-ms
+         (isi 0 untuk mematikan).
+         ==================================================================== -->
+    <section class="gallery-section">
+      <div class="gallery" data-autoplay-ms="5000" role="group" aria-roledescription="carousel" aria-label="Galeri">
+
+        <ul class="gallery-track">
+
+        <!-- Slide 1. Salin blok <li class="gallery-item"> ini untuk menambah slide.
+             Titik navigasi bertambah otomatis. -->
+        <li class="gallery-item" data-title="Judul Slide 1">
+          <!-- EDIT: href = tujuan klik pada slide -->
+          <a class="gallery-link" href="#">
+            <!-- EDIT: latar slide. Ganti <div class="gallery-bg"> dengan:
+                  -->
+            <img class="gallery-bg" src="img/img3.webp" alt="">
+
+            <div class="gallery-top">
+              <!-- EDIT: logo kecil di kiri atas (ganti dengan <img> atau hapus) -->
+              <img class="gallery-logo" src="DATS.png" alt="Logo">
+              <!-- EDIT: judul slide -->
+              <span class="visuallyhidden">Home</span>
+            </div>
+
+            <div class="gallery-bottom">
+              <!-- EDIT: teks tombol -->
+              <span class="gallery-button">Survei sekarang</span>
+              <!-- EDIT: kategori (tebal) dan deskripsi singkat -->
+              <p class="gallery-note"><span class="gallery-genre">Elegant</span>Most elegant living experience.</p>
+            </div>
+          </a>
+        </li>
+        <!-- Slide 2. Salin blok <li class="gallery-item"> ini untuk menambah slide.
+             Titik navigasi bertambah otomatis. -->
+        <li class="gallery-item" data-title="Judul Slide 2">
+          <!-- EDIT: href = tujuan klik pada slide -->
+          <a class="gallery-link" href="#">
+            <!-- EDIT: latar slide. Ganti <div class="gallery-bg"> dengan:
+                  -->
+            <img class="gallery-bg" src="img/img4.webp" alt="">
+
+            <div class="gallery-top">
+              <!-- EDIT: logo kecil di kiri atas (ganti dengan <img> atau hapus) -->
+              <img class="gallery-logo" src="DATS.png" alt="Logo">
+              <!-- EDIT: judul slide -->
+              <span class="visuallyhidden">Home</span>
+            </div>
+
+            <div class="gallery-bottom">
+              <!-- EDIT: teks tombol -->
+              <span class="gallery-button">Survei sekarang</span>
+              <!-- EDIT: kategori (tebal) dan deskripsi singkat -->
+              <p class="gallery-note"><span class="gallery-genre">Elegant</span>Most elegant living experience.</p>
+            </div>
+          </a>
+        </li>
+        <!-- Slide 3. Salin blok <li class="gallery-item"> ini untuk menambah slide.
+             Titik navigasi bertambah otomatis. -->
+        <li class="gallery-item" data-title="Judul Slide 3">
+          <!-- EDIT: href = tujuan klik pada slide -->
+          <a class="gallery-link" href="#">
+            <!-- EDIT: latar slide. Ganti <div class="gallery-bg"> dengan:
+                  -->
+            <img class="gallery-bg" src="img/img5.webp" alt="">
+
+            <div class="gallery-top">
+              <!-- EDIT: logo kecil di kiri atas (ganti dengan <img> atau hapus) -->
+              <img class="gallery-logo" src="DATS.png" alt="Logo">
+              <!-- EDIT: judul slide -->
+              <span class="visuallyhidden">Home</span>
+            </div>
+
+            <div class="gallery-bottom">
+              <!-- EDIT: teks tombol -->
+              <span class="gallery-button">Survei sekarang</span>
+              <!-- EDIT: kategori (tebal) dan deskripsi singkat -->
+              <p class="gallery-note"><span class="gallery-genre">Elegant</span>Most elegant living experience.</p>
+            </div>
+          </a>
+        </li>
+        </ul>
+
+        <!-- Titik navigasi dan tombol putar/jeda. Titik diisi otomatis oleh script.js. -->
+        <div class="gallery-dotnav">
+          <div class="gallery-dots" role="tablist" aria-label="Pilih slide"></div>
+          <button class="gallery-playpause" type="button" aria-label="Jeda galeri">
+            <svg class="icon-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>
+            <svg class="icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ======================================================================
+       SEGMEN 5: FOOTER
+       Isi: catatan kaki, direktori tautan (4 kolom), tautan toko, wilayah,
+       hak cipta, dan tautan legal.
+       ====================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-content">
+
+      <!-- Catatan kaki. id harus sama dengan href penanda di tile (mis. #footnote-1). -->
+      
+      <div class="footer-end">
+        <!-- EDIT: baris tautan toko. Hapus jika tidak perlu. -->
+        <div class="footer-shop">
+          <a href="#">Cari Grand Babat Regency</a> di dekat Anda.
+        </div>
+
+        <div class="footer-bottom">
+          <!-- EDIT: hak cipta -->
+          <p class="footer-copyright">Hak cipta © 2026 Grand Babat Regency. Seluruh hak cipta dilindungi undang-undang.</p>
+
+          <!-- EDIT: tautan legal -->
+          <ul class="footer-legal-links">
+            <li><a href="#">Kebijakan Privasi</a></li>
+            <li><a href="#">Ketentuan Penggunaan</a></li>
+            <li><a href="#">Legal</a></li>
+            <li><a href="#">Peta Situs</a></li>
+          </ul>
+
+          <!-- EDIT: negara atau wilayah -->
+          <a class="footer-locale" href="#">Indonesia</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>

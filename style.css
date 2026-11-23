@@ -1,0 +1,937 @@
+/* ==========================================================================
+   TEMPLATE WEBSITE - style.css
+   Urutan file:
+     1. Variabel (warna, font, ukuran)  <- edit di sini dulu
+     2. Reset dan dasar
+     3. Header: bar navigasi, dropdown menu, menu mobile, flyout pencarian
+     4. Tile (hero dan promo)
+     5. Galeri (carousel)
+     6. Footer
+   Breakpoint yang dipakai: 833px (navigasi), 734px (tile dan footer).
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. VARIABEL
+   Ganti nilai di sini untuk mengubah tampilan seluruh halaman.
+   ========================================================================== */
+:root {
+  /* Warna */
+  --color-bg: #ffffff;              /* latar halaman dan header */
+  --color-bg-alt: #f5f5f7;          /* latar tile terang dan footer */
+  --color-text: #1d1d1f;            /* teks utama */
+  --color-text-muted: #6e6e73;      /* teks sekunder, footer */
+  --color-dark-bg: #000000;         /* latar tile gelap */
+  --color-dark-text: #f5f5f7;       /* teks di tile gelap */
+  --color-accent: #0071e3;          /* tombol utama dan tautan */
+  --color-accent-hover: #0077ed;
+  --color-border: rgba(0, 0, 0, 0.16);
+
+  /* Font. Ganti dengan font Anda sendiri (mis. Google Fonts) */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+
+  /* Ukuran */
+  --nav-height: 44px;               /* tinggi bar navigasi desktop */
+  --content-width: 1024px;          /* lebar isi navigasi dan footer */
+  --tile-gap: 12px;                 /* jarak antar tile */
+  --tile-radius: 28px;              /* lengkung sudut tile dan galeri */
+  --tile-min-height: 580px;         /* tinggi minimum tile promo */
+  --hero-min-height: 692px;         /* tinggi minimum tile hero */
+
+  /* Kecepatan transisi */
+  --speed: 0.3s;
+}
+
+@media (max-width: 833px) {
+  :root { --nav-height: 48px; }     /* bar navigasi mobile lebih tinggi */
+}
+
+@media (max-width: 734px) {
+  :root {
+    --tile-radius: 20px;
+    --tile-min-height: 500px;
+    --hero-min-height: 560px;
+  }
+}
+
+
+/* ==========================================================================
+   2. RESET DAN DASAR
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: var(--nav-height);
+}
+
+/* Kunci scroll saat menu mobile terbuka (diatur oleh script.js) */
+html.nav-locked { overflow: hidden; }
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.022em;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Teks yang hanya dibaca pembaca layar */
+.visuallyhidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Tautan lompat ke konten, muncul saat difokus dengan keyboard */
+.skip-link {
+  position: absolute;
+  left: 12px; top: -60px;
+  z-index: 200;
+  padding: 8px 16px;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: 8px;
+  transition: top var(--speed);
+}
+.skip-link:focus { top: 8px; }
+
+
+/* ==========================================================================
+   3. HEADER
+   Struktur: .site-header > .nav > (.nav-bar, .nav-search, .nav-curtain)
+   Urutan lapisan (z-index): bar 3 > flyout/dropdown 2 > curtain 1
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav { position: relative; }
+
+/* --- Bar navigasi --- */
+.nav-bar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  height: var(--nav-height);
+  padding-inline: max(22px, calc((100% - var(--content-width)) / 2));
+  font-size: 12px;
+  letter-spacing: -0.01em;
+}
+
+/* Latar bar dipisah ke pseudo-element supaya backdrop-filter tidak
+   membuat panel menu mobile (position: fixed) ikut terkunci di dalam bar. */
+.nav-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: background var(--speed);
+}
+
+/* Saat dropdown, flyout, atau menu terbuka, bar dibuat solid agar menyatu dengan panelnya */
+.nav.is-search-open .nav-bar::before,
+.nav.is-dropdown-open .nav-bar::before,
+.nav.is-menu-open .nav-bar::before {
+  background: var(--color-bg);
+  border-bottom-color: transparent;
+}
+
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  height: var(--nav-height);
+  padding-right: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* Tombol kembali submenu (hanya untuk mobile) */
+.nav-back {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: var(--nav-height);
+  margin-left: -10px;
+  margin-right: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  opacity: 0.85;
+}
+.nav-back:hover { opacity: 1; }
+.nav-back svg { width: 9px; height: 16px; }
+
+/* Daftar menu desktop: item dibagi rata di antara logo dan ikon cari */
+.nav-list {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  margin-inline: 8px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  height: var(--nav-height);
+  padding-inline: 8px;
+  opacity: 0.8;
+  transition: opacity var(--speed);
+}
+.nav-link:hover,
+.nav-item.is-open > .nav-link,
+.nav-link[aria-current="page"] { opacity: 1; }
+
+/* --- Dropdown menu global header (desktop) --- */
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 0;
+  overflow: hidden;
+  background: var(--color-bg);
+  visibility: hidden;
+  opacity: 0;
+  transition: height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.24s ease,
+              visibility 0s 0.28s;
+}
+
+.nav-item.is-open > .nav-dropdown {
+  visibility: visible;
+  opacity: 1;
+  transition: height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.24s ease;
+}
+
+.nav-dropdown.is-scrollable { overflow-y: auto; }
+
+.nav-dropdown-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 64px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 40px 22px 64px;
+}
+
+.nav-dropdown-title {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.nav-dropdown-links a {
+  display: inline-block;
+  padding: 5px 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.33;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  transition: color var(--speed);
+}
+
+.nav-dropdown-group.is-elevated { min-width: 240px; }
+.nav-dropdown-group.is-elevated .nav-dropdown-links a {
+  padding: 6px 0;
+  font-size: 24px;
+  line-height: 1.16;
+  letter-spacing: -0.01em;
+}
+
+.nav-dropdown-links a:hover { color: var(--color-accent); }
+
+/* Animasi bertahap (stagger) isi dropdown saat terbuka */
+.nav-dropdown-group {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+.nav-item.is-open .nav-dropdown-group {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--group-index, 0) * 40ms + 40ms);
+}
+
+/* Ikon cari dan tombol hamburger */
+.nav-search-toggle,
+.nav-menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: var(--nav-height);
+  padding: 0;
+  border: 0;
+  background: none;
+  opacity: 0.8;
+}
+.nav-search-toggle:hover,
+.nav-menu-toggle:hover { opacity: 1; }
+.nav-search-toggle svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* Hamburger: dua garis yang berubah jadi tanda X saat menu terbuka */
+.nav-menu-toggle { display: none; position: relative; }
+.nav-menu-toggle span {
+  position: absolute;
+  left: 11px;
+  width: 14px;
+  height: 1px;
+  background: currentColor;
+  transition: transform var(--speed), top var(--speed);
+}
+.nav-menu-toggle span:nth-child(1) { top: calc(50% - 3px); }
+.nav-menu-toggle span:nth-child(2) { top: calc(50% + 3px); }
+.nav.is-menu-open .nav-menu-toggle span:nth-child(1) { top: 50%; transform: rotate(45deg); }
+.nav.is-menu-open .nav-menu-toggle span:nth-child(2) { top: 50%; transform: rotate(-45deg); }
+
+/* --- Flyout pencarian (dropdown di bawah bar) --- */
+.nav-search {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 24px max(22px, calc((100% - 692px) / 2)) 40px;
+  background: var(--color-bg);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity var(--speed), transform var(--speed), visibility 0s var(--speed);
+}
+.nav.is-search-open .nav-search {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--speed), transform var(--speed);
+}
+
+.nav-search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+.nav-search-field svg { flex: none; width: 20px; height: 20px; fill: var(--color-text-muted); }
+.nav-search-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+.nav-search-input::placeholder { color: var(--color-text-muted); }
+
+.nav-search-title {
+  margin-top: 28px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+.nav-search-links { margin-top: 10px; }
+.nav-search-links a {
+  display: block;
+  padding: 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.nav-search-links a:hover { color: var(--color-accent); }
+
+/* --- Curtain: lapisan gelap di belakang flyout & dropdown --- */
+.nav-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--speed), visibility 0s var(--speed);
+}
+.nav.is-search-open .nav-curtain,
+.nav.is-dropdown-open .nav-curtain {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity var(--speed);
+}
+
+/* --- Navigasi mobile: daftar menu & submenu jadi panel layar penuh --- */
+@media (max-width: 833px) {
+  .nav-logo { margin-right: auto; }
+  .nav-menu-toggle { display: inline-flex; }
+  .nav.is-submenu-open .nav-logo,
+  .nav.is-submenu-open .nav-search-toggle { display: none; }
+  .nav.is-submenu-open .nav-back { display: inline-flex; }
+
+  .nav-list {
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin: 0;
+    padding: 12px 22px 40px;
+    overflow-y: auto;
+    background: var(--color-bg);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity var(--speed), visibility 0s var(--speed);
+  }
+  .nav.is-menu-open .nav-list {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity var(--speed);
+  }
+
+  .nav-link {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    padding: 10px 0;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    opacity: 1;
+  }
+
+  /* Panah kecil untuk item yang punya submenu */
+  .nav-item.has-dropdown > .nav-link::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-right: 4px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    opacity: 0.45;
+    transform: rotate(45deg);
+    transition: opacity var(--speed);
+  }
+  .nav-item.has-dropdown > .nav-link:hover::after { opacity: 1; }
+
+  /* Panel submenu mobile menutupi daftar utama dengan animasi geser */
+  .nav-dropdown {
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    height: auto !important;
+    overflow-y: auto;
+    transform: translateX(24px);
+    transition: opacity 0.24s ease, transform 0.24s ease, visibility 0s 0.24s;
+  }
+  .nav-item.is-open > .nav-dropdown {
+    transform: none;
+    transition: opacity 0.24s ease, transform 0.24s ease;
+  }
+
+  .nav-dropdown-inner {
+    flex-direction: column;
+    gap: 28px;
+    padding: 16px 22px 48px;
+  }
+  .nav-dropdown-title { font-size: 14px; }
+  .nav-dropdown-links a { font-size: 17px; padding: 6px 0; }
+  .nav-dropdown-group.is-elevated .nav-dropdown-links a { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-dropdown,
+  .nav-dropdown-group,
+  .nav-curtain {
+    transition: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   4. TILE (dipakai oleh segmen hero dan promo)
+   Varian: .theme-dark (latar gelap), .tile-content-split (logo dan teks
+   dalam dua kelompok). Placeholder gambar ada di .tile-image-wrapper.
+   ========================================================================== */
+.main { display: block; }
+
+.section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--tile-gap);
+  padding: var(--tile-gap);
+}
+
+/* Promo: dua kolom di desktop, satu kolom di mobile */
+.section-promo { grid-template-columns: repeat(2, 1fr); padding-top: 0; }
+.section-hero  { padding-bottom: var(--tile-gap); }
+
+@media (max-width: 734px) {
+  .section-promo { grid-template-columns: 1fr; }
+}
+
+.tile-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--tile-min-height);
+  overflow: hidden;
+  border-radius: var(--tile-radius);
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  text-align: center;
+}
+.section-hero .tile-wrapper { min-height: var(--hero-min-height); }
+
+.tile-wrapper.theme-dark {
+  background: var(--color-dark-bg);
+  color: var(--color-dark-text);
+}
+
+/* Tautan yang menutupi seluruh tile. Hapus elemen <a class="tile-link">
+   di HTML jika tile tidak perlu bisa diklik di seluruh area. */
+.tile-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.tile-content {
+  position: relative;
+  z-index: 2;
+  padding: 56px 24px 0;
+  pointer-events: none;           /* klik tembus ke .tile-link */
+}
+.tile-content a,
+.tile-content button { pointer-events: auto; }
+
+.tile-headline {
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.005em;
+}
+.section-promo .tile-headline { font-size: 40px; line-height: 1.1; }
+
+.tile-subhead {
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: 0.007em;
+}
+.section-promo .tile-subhead { font-size: 21px; line-height: 1.19; }
+
+.tile-callout {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+.theme-dark .tile-callout { color: rgba(245, 245, 247, 0.72); }
+.tile-callout:empty { display: none; }
+
+.footnote a { color: inherit; }
+
+/* Tombol */
+.tile-ctas {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.button {
+  display: inline-block;
+  min-width: 28px;
+  padding: 8px 18px;
+  border: 1px solid var(--color-accent);
+  border-radius: 980px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 17px;
+  line-height: 1.18;
+  letter-spacing: -0.022em;
+  text-align: center;
+  transition: background var(--speed), color var(--speed);
+}
+.button:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+
+.button-secondary {
+  background: transparent;
+  color: var(--color-accent);
+}
+.button-secondary:hover { background: var(--color-accent); color: #fff; }
+
+.theme-dark .button-secondary { color: #2997ff; border-color: #2997ff; }
+.theme-dark .button-secondary:hover { background: #2997ff; color: #000; }
+
+/* Varian split: logo di atas, teks dan tombol di bawahnya */
+.tile-content-split { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.tile-split-group { width: 100%; }
+.tile-logo {
+  display: inline-grid;
+  place-items: center;
+  min-width: 200px;
+  height: 40px;
+  border: 1px dashed currentColor;
+  border-radius: 8px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* Area gambar */
+.tile-image-wrapper {
+  position: relative;
+  z-index: 0;
+  flex: 1;
+  display: flex;
+  min-height: 240px;
+  margin-top: 28px;
+  padding: 0 24px 24px;
+}
+
+/* Placeholder gambar. Ganti elemen ini dengan <img> (lihat komentar di HTML). */
+.placeholder {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  border: 2px dashed rgba(128, 128, 128, 0.45);
+  border-radius: calc(var(--tile-radius) - 8px);
+  background: rgba(128, 128, 128, 0.14);
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+.theme-dark .placeholder { color: rgba(245, 245, 247, 0.6); }
+
+/* Jika diganti <img>, gambar mengisi area dengan rasio terjaga */
+.tile-image-wrapper > img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--tile-radius) - 8px); }
+
+@media (max-width: 734px) {
+  .tile-content { padding-top: 40px; }
+  .tile-headline,
+  .section-promo .tile-headline { font-size: 32px; }
+  .tile-subhead,
+  .section-promo .tile-subhead { font-size: 19px; }
+  .button { font-size: 15px; }
+  .tile-image-wrapper { padding: 0 16px 16px; min-height: 200px; }
+}
+
+
+/* ==========================================================================
+   5. GALERI (carousel)
+   Slide digerakkan script.js lewat transform pada .gallery-track.
+   Titik navigasi dibuat otomatis dari jumlah .gallery-item.
+   ========================================================================== */
+.gallery-section { padding: 0 var(--tile-gap) var(--tile-gap); }
+
+.gallery {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--tile-radius);
+  background: var(--color-dark-bg);
+  color: #fff;
+}
+
+.gallery-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-item {
+  flex: 0 0 100%;
+  position: relative;
+  min-height: 560px;
+}
+
+.gallery-link {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 40px 88px;     /* bawah lebih besar agar tidak tertimpa titik navigasi */
+}
+
+/* Latar slide: placeholder. Ganti dengan <img> atau background-image. */
+.gallery-bg {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #2a2a2d;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+.gallery-bg::after {            /* gradasi gelap supaya teks tetap terbaca */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent 55%);
+}
+
+.gallery-top,
+.gallery-bottom { position: relative; z-index: 1; }
+
+.gallery-top { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+
+.gallery-logo {
+  display: inline-grid;
+  place-items: center;
+  height: 40px;
+  min-width: 93.392px;
+  border: 1px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gallery-bottom { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+.gallery-button {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 980px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1d1d1f;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.gallery-note { max-width: 420px; font-size: 15px; line-height: 1.33; }
+.gallery-genre { display: block; font-weight: 600; }
+
+/* Titik navigasi + tombol putar/jeda */
+.gallery-dotnav {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(40, 40, 42, 0.72);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  transform: translateX(-50%);
+}
+
+.gallery-dots { display: flex; align-items: center; gap: 10px; }
+
+.gallery-dot {
+  position: relative;
+  display: block;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: width var(--speed), background var(--speed);
+}
+.gallery-dot[aria-selected="true"] { width: 40px; }
+
+/* Isi progres pada titik aktif. Durasinya mengikuti data-autoplay-ms. */
+.gallery-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.gallery-dot[aria-selected="true"]::after { transform: scaleX(1); }
+.gallery.is-playing .gallery-dot[aria-selected="true"]::after {
+  animation: dot-fill var(--gallery-duration, 5s) linear forwards;
+}
+@keyframes dot-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.gallery-playpause {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+}
+.gallery-playpause svg { width: 12px; height: 12px; fill: currentColor; }
+.gallery-playpause .icon-play { display: none; }
+.gallery:not(.is-playing) .gallery-playpause .icon-play { display: block; }
+.gallery:not(.is-playing) .gallery-playpause .icon-pause { display: none; }
+
+@media (max-width: 734px) {
+  .gallery-item { min-height: 480px; }
+  .gallery-link { padding: 24px 20px 80px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-track { transition: none; }
+  .gallery.is-playing .gallery-dot[aria-selected="true"]::after { animation: none; }
+}
+
+
+/* ==========================================================================
+   6. FOOTER
+   Desktop: 4 kolom. Mobile (<=734px): kolom jadi akordeon (buka-tutup).
+   ========================================================================== */
+.site-footer {
+  background: var(--color-bg-alt);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: -0.01em;
+}
+
+.footer-content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 20px 22px 21px;
+}
+.footer-content a { color: inherit; }
+.footer-content a:hover { text-decoration: underline; }
+
+/* Catatan kaki */
+.footer-footnotes {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.footer-footnotes ul + ul { margin-top: 8px; }
+.footer-footnotes li { margin-bottom: 6px; }
+.footer-footnotes li:last-child { margin-bottom: 0; }
+
+/* Direktori tautan */
+.footer-directory {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 20px;
+  padding: 20px 0 8px;
+}
+
+.footer-section { padding-bottom: 12px; }
+
+.footer-section-title { font-size: 12px; font-weight: 600; color: var(--color-text); }
+
+/* Di desktop, tombol judul tampil seperti teks biasa (tidak bisa diklik) */
+.footer-section-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  color: var(--color-text);
+  cursor: default;
+  pointer-events: none;
+}
+.footer-section-icon { display: none; }
+
+.footer-section-list li { margin-bottom: 7px; }
+
+/* Baris bawah: toko, bahasa/wilayah, hak cipta, tautan legal */
+.footer-end { padding-top: 4px; }
+
+.footer-shop { padding: 12px 0; border-bottom: 1px solid var(--color-border); }
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-top: 14px;
+}
+
+.footer-legal-links { display: flex; flex-wrap: wrap; gap: 4px 0; }
+.footer-legal-links li + li {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid var(--color-border);
+}
+
+@media (max-width: 734px) {
+  .footer-directory { display: block; padding: 8px 0 0; }
+
+  .footer-section { padding: 0; border-bottom: 1px solid var(--color-border); }
+  .footer-section:last-child { border-bottom: 0; }
+
+  .footer-section-button {
+    padding: 12px 0;
+    font-size: 14px;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  /* Ikon plus yang berputar jadi tanda silang saat dibuka */
+  .footer-section-icon {
+    position: relative;
+    display: block;
+    width: 12px;
+    height: 12px;
+    transition: transform var(--speed);
+  }
+  .footer-section-icon::before,
+  .footer-section-icon::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: currentColor;
+  }
+  .footer-section-icon::after { transform: rotate(90deg); }
+  .footer-section.is-open .footer-section-icon { transform: rotate(45deg); }
+
+  .footer-section-list { display: none; padding-bottom: 8px; }
+  .footer-section.is-open .footer-section-list { display: block; }
+
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}
