@@ -41,7 +41,8 @@
         </button>
 
         <!-- EDIT: logo. Teks bisa diganti <img src="logo.svg" alt="Nama Situs" height="20"> -->
-        <img src="DATS.png" alt="GrandBabatRegency" height="20">
+        <span class="nav-bar-title" aria-hidden="true"></span>
+        <a class="nav-logo" href="#"><img src="DATS.png" alt="Grand Babat Regency" height="20"></a>
 
         <!-- EDIT: item menu + dropdown. Tambahkan <div class="nav-dropdown"> di dalam
              <li class="nav-item"> untuk menu yang memiliki dropdown. -->
@@ -70,8 +71,6 @@
                     <li><a href="#">Kas Operasional</a></li>
                   </ul>
                 </div>
-                <div class="nav-dropdown-group">
-                </div>
               </div>
             </div>
           </li>
@@ -81,7 +80,7 @@
             <div class="nav-dropdown" id="nav-dropdown-2" role="region" aria-label="Submenu Menu 2">
               <div class="nav-dropdown-inner">
                 <div class="nav-dropdown-group">
-                  <h1 class="nav-dropdown-title">Laporan Mingguan</h1>
+                  <h2 class="nav-dropdown-title">Laporan Mingguan</h2>
                   <ul class="nav-dropdown-links">
                     <li><a href="#">Progress Rumah</a></li>
                     <li><a href="#">Progress Saluran</a></li>
@@ -89,13 +88,13 @@
                   </ul>
                 </div>
                 <div class="nav-dropdown-group">
-                  <h1 class="nav-dropdown-title">Dokumentasi Project</h1>
+                  <h2 class="nav-dropdown-title">Dokumentasi Project</h2>
                   <ul class="nav-dropdown-links">
                     <li><a href="#">P58</a></li>
                   </ul>
                 </div>
                 <div class="nav-dropdown-group">
-                  <h1 class="nav-dropdown-title">Tagihan</h1>
+                  <h2 class="nav-dropdown-title">Tagihan</h2>
                   <ul class="nav-dropdown-links">
                     <li><a href="#">Data Urug</a></li>
                     <li><a href="#">Yoga Putra</a></li>
@@ -161,6 +160,8 @@
           </li>
 
 
+        </ul>
+
         <!-- Tombol pencarian. Hapus tombol ini dan segmen "Flyout pencarian" di bawah
              jika situs tidak memerlukan pencarian. -->
         <button class="nav-search-toggle" type="button" aria-label="Cari"
@@ -187,6 +188,7 @@
                    autocomplete="off" autocapitalize="off" autocorrect="off">
           </div>
         </form>
+      </div>
 
       <!-- Lapisan gelap di belakang flyout/dropdown. Jangan dihapus. -->
       <div class="nav-curtain"></div>
@@ -265,7 +267,7 @@
          (isi 0 untuk mematikan).
          ==================================================================== -->
     <section class="gallery-section">
-      <div class="gallery" data-autoplay-ms="5000" role="group" aria-roledescription="carousel" aria-label="Galeri">
+      <div class="gallery gallery-desktop" data-autoplay-ms="5000" role="group" aria-roledescription="carousel" aria-label="Galeri">
 
         <ul class="gallery-track">
 
@@ -276,7 +278,7 @@
           <a class="gallery-link" href="#">
             <!-- EDIT: latar slide. Ganti <div class="gallery-bg"> dengan:
                   -->
-            <img class="gallery-bg" src="img/img3.webp" alt="">
+            <img class="gallery-bg" loading="lazy" src="img/img3.webp" alt="">
 
             <div class="gallery-top">
               <!-- EDIT: logo kecil di kiri atas (ganti dengan <img> atau hapus) -->
@@ -300,7 +302,7 @@
           <a class="gallery-link" href="#">
             <!-- EDIT: latar slide. Ganti <div class="gallery-bg"> dengan:
                   -->
-            <img class="gallery-bg" src="img/img4.webp" alt="">
+            <img class="gallery-bg" loading="lazy" src="img/img4.webp" alt="">
 
             <div class="gallery-top">
               <!-- EDIT: logo kecil di kiri atas (ganti dengan <img> atau hapus) -->
@@ -324,7 +326,7 @@
           <a class="gallery-link" href="#">
             <!-- EDIT: latar slide. Ganti <div class="gallery-bg"> dengan:
                   -->
-            <img class="gallery-bg" src="img/img5.webp" alt="">
+            <img class="gallery-bg" loading="lazy" src="img/img5.webp" alt="">
 
             <div class="gallery-top">
               <!-- EDIT: logo kecil di kiri atas (ganti dengan <img> atau hapus) -->
@@ -352,6 +354,58 @@
           </button>
         </div>
 
+      </div>
+
+      <!-- ==================================================================
+           GALERI MOBILE (div baru, hanya tampil di ponsel: lebar <= 734px atau ponsel landscape)
+           Foto ditampilkan potret (4:5) saat ponsel tegak dan lebar (16:9) saat ponsel miring.
+           EDIT: titik fokus foto lewat style="--focus: X% Y%" pada tiap slide.
+           Foto potret asli: ganti src ke file potret Anda (mis. img/mobile/m1.webp).
+           data-autoplay-ms: 0 = tanpa putar otomatis.
+           ================================================================== -->
+      <div class="gallery-mobile" data-autoplay-ms="5000" role="group" aria-roledescription="carousel" aria-label="Galeri">
+        <ul class="gm-track" tabindex="0" aria-label="Geser untuk melihat slide lain">
+          <li class="gm-slide" data-title="Judul Slide 1" style="--focus: 50% 50%">
+            <a class="gm-link" href="#">
+              <img class="gm-img" src="img/img3.webp" alt="" loading="lazy">
+              <img class="gm-logo" src="DATS.png" alt="Logo">
+              <span class="gm-caption">
+                <span class="gm-genre">Elegant</span>
+                <span class="gm-note">Most elegant living experience.</span>
+                <span class="gm-button">Survei sekarang</span>
+              </span>
+            </a>
+          </li>
+          <li class="gm-slide" data-title="Judul Slide 2" style="--focus: 50% 50%">
+            <a class="gm-link" href="#">
+              <img class="gm-img" src="img/img4.webp" alt="" loading="lazy">
+              <img class="gm-logo" src="DATS.png" alt="Logo">
+              <span class="gm-caption">
+                <span class="gm-genre">Elegant</span>
+                <span class="gm-note">Most elegant living experience.</span>
+                <span class="gm-button">Survei sekarang</span>
+              </span>
+            </a>
+          </li>
+          <li class="gm-slide" data-title="Judul Slide 3" style="--focus: 50% 50%">
+            <a class="gm-link" href="#">
+              <img class="gm-img" src="img/img5.webp" alt="" loading="lazy">
+              <img class="gm-logo" src="DATS.png" alt="Logo">
+              <span class="gm-caption">
+                <span class="gm-genre">Elegant</span>
+                <span class="gm-note">Most elegant living experience.</span>
+                <span class="gm-button">Survei sekarang</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <div class="gm-controls">
+          <div class="gm-dots"></div>
+          <button class="gm-playpause" type="button" aria-label="Jeda galeri">
+            <svg class="icon-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>
+            <svg class="icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg>
+          </button>
+        </div>
       </div>
     </section>
 

@@ -9,6 +9,14 @@
 (function () {
   "use strict";
 
+  // Definisi "mobile": harus sama dengan media query di style.css
+  var NAV_MQ = "(max-width: 833px), (hover: none) and (pointer: coarse) and (max-height: 500px)";
+  var PHONE_MQ = "(max-width: 734px), (hover: none) and (pointer: coarse) and (max-height: 500px)";
+  var phoneQuery = window.matchMedia(PHONE_MQ);
+  var listen = function (mq, fn) {
+    if (mq.addEventListener) mq.addEventListener("change", fn); else mq.addListener(fn);
+  };
+
   /* ------------------------------------------------------------------------
      1. NAVIGASI
      Kelas pada <nav class="nav">:
@@ -26,8 +34,9 @@
     var searchToggle = nav.querySelector(".nav-search-toggle");
     var searchInput = nav.querySelector(".nav-search-input");
     var curtain = nav.querySelector(".nav-curtain");
+    var navTitle = nav.querySelector(".nav-bar-title");
     var root = document.documentElement;
-    var mobileQuery = window.matchMedia("(max-width: 833px)");
+    var mobileQuery = window.matchMedia(NAV_MQ);
 
     var items = Array.prototype.slice.call(nav.querySelectorAll(".nav-item"));
     var activeItem = null;
@@ -71,6 +80,12 @@
 
       activeItem = nextItem || null;
 
+      // Di mobile, item lain dinonaktifkan dari fokus/pembaca layar saat submenu terbuka
+      items.forEach(function (it) {
+        if (isMobile && activeItem && it !== activeItem) it.setAttribute("inert", "");
+        else it.removeAttribute("inert");
+      });
+
       if (activeItem) {
         var dd = activeItem.querySelector(".nav-dropdown");
         var link = activeItem.querySelector(".nav-link");
@@ -79,7 +94,12 @@
         if (isMobile) {
           activeItem.classList.add("is-open");
           nav.classList.add("is-submenu-open");
-          if (dd) dd.scrollTop = 0;
+          if (navTitle && link) navTitle.textContent = link.textContent.trim();
+          if (dd) {
+            dd.scrollTop = 0;
+            var firstLink = dd.querySelector("a");
+            if (firstLink) firstLink.focus({ preventScroll: true });
+          }
         } else {
           setSearch(false);
           nav.classList.add("is-dropdown-open");
@@ -107,6 +127,7 @@
       if (!open) setDropdown(null);
       nav.classList.toggle("is-menu-open", open);
       menuToggle.setAttribute("aria-expanded", String(open));
+      menuToggle.setAttribute("aria-label", open ? "Tutup menu" : "Menu");
       syncLock();
     };
 
@@ -136,6 +157,12 @@
       });
 
       navList.addEventListener("click", function (event) {
+        // Klik tautan tujuan (bukan pembuka submenu) menutup menu/dropdown
+        var target = event.target.closest(".nav-dropdown-links a, .nav-item:not(.has-dropdown) > .nav-link");
+        if (target) {
+          if (mobileQuery.matches) setMenu(false); else setDropdown(null);
+          return;
+        }
         var link = event.target.closest(".nav-link");
         if (!link) return;
         var item = link.closest(".nav-item");
@@ -195,6 +222,8 @@
         searchToggle.focus();
       } else if (nav.classList.contains("is-dropdown-open")) {
         setDropdown(null, true);
+      } else if (nav.classList.contains("is-submenu-open")) {
+        setDropdown(null, true);
       } else if (nav.classList.contains("is-menu-open")) {
         setMenu(false);
         menuToggle.focus();
@@ -214,8 +243,7 @@
       setDropdown(null);
       if (!mobileQuery.matches) setMenu(false);
     };
-    if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", onBreakpoint);
-    else mobileQuery.addListener(onBreakpoint);
+    listen(mobileQuery, onBreakpoint);
   }
 
 
@@ -230,7 +258,7 @@
 
   if (gallery) {
     var track = gallery.querySelector(".gallery-track");
-    var items = Array.prototype.slice.call(gallery.querySelectorAll(".gallery-item"));
+    var slides = Array.prototype.slice.call(gallery.querySelectorAll(".gallery-item"));
     var dotsWrap = gallery.querySelector(".gallery-dots");
     var playButton = gallery.querySelector(".gallery-playpause");
     var duration = parseInt(gallery.getAttribute("data-autoplay-ms"), 10);
@@ -244,7 +272,7 @@
     gallery.style.setProperty("--gallery-duration", duration + "ms");
 
     // Buat titik navigasi
-    var dots = items.map(function (item, index) {
+    var dots = slides.map(function (item, index) {
       var dot = document.createElement("button");
       dot.type = "button";
       dot.className = "gallery-dot";
@@ -264,14 +292,14 @@
 
     var schedule = function () {
       window.clearTimeout(timer);
-      if (playing) timer = window.setTimeout(function () { goTo(current + 1, false); }, duration);
+      if (playing && gallery.offsetParent !== null) timer = window.setTimeout(function () { goTo(current + 1, false); }, duration);
     };
 
     var goTo = function (index, fromUser) {
-      current = (index + items.length) % items.length;
+      current = (index + slides.length) % slides.length;
       track.style.transform = "translateX(" + (-100 * current) + "%)";
 
-      items.forEach(function (item, i) {
+      slides.forEach(function (item, i) {
         // inert mencegah slide yang tidak terlihat bisa difokus atau dibaca pembaca layar
         if (i === current) item.removeAttribute("inert"); else item.setAttribute("inert", "");
         dots[i].setAttribute("aria-selected", String(i === current));
@@ -315,8 +343,109 @@
       if (document.hidden) window.clearTimeout(timer); else schedule();
     });
 
+    listen(phoneQuery, schedule);   // galeri desktop berhenti saat disembunyikan di ponsel
     updatePlayButton();
     goTo(0, false);
+  }
+
+
+  /* ------------------------------------------------------------------------
+     2b. GALERI MOBILE (.gallery-mobile, hanya tampil di ponsel)
+     Geser memakai scroll-snap CSS. Script ini mengatur titik, tombol
+     putar/jeda, dan putar otomatis (jeda saat disentuh/difokus/tab tersembunyi).
+     ------------------------------------------------------------------------ */
+  var gm = document.querySelector(".gallery-mobile");
+
+  if (gm) {
+    var gmTrack = gm.querySelector(".gm-track");
+    var gmSlides = Array.prototype.slice.call(gm.querySelectorAll(".gm-slide"));
+    var gmDots = gm.querySelector(".gm-dots");
+    var gmPlay = gm.querySelector(".gm-playpause");
+    var gmMs = parseInt(gm.getAttribute("data-autoplay-ms"), 10);
+    if (isNaN(gmMs)) gmMs = 5000;
+    var gmReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var gmIndex = 0, gmTimer = null, gmHold = false, gmRaf = 0, gmResize = null;
+    var gmPlaying = gmMs > 0 && !gmReduce.matches;
+
+    var gmLeft = function (i) {
+      var s = gmSlides[i];
+      return s.offsetLeft - (gmTrack.clientWidth - s.offsetWidth) / 2;
+    };
+
+    var gmButtons = gmSlides.map(function (slide, i) {
+      slide.setAttribute("role", "group");
+      slide.setAttribute("aria-roledescription", "slide");
+      slide.setAttribute("aria-label", (i + 1) + " dari " + gmSlides.length);
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "gm-dot";
+      b.setAttribute("aria-label", "Slide " + (i + 1) + ": " + (slide.getAttribute("data-title") || ""));
+      b.addEventListener("click", function () { gmGo(i); });
+      gmDots.appendChild(b);
+      return b;
+    });
+
+    var gmMark = function (i) {
+      gmIndex = i;
+      gmButtons.forEach(function (b, n) { b.setAttribute("aria-current", String(n === i)); });
+    };
+
+    var gmGo = function (i) {
+      i = (i + gmSlides.length) % gmSlides.length;
+      gmTrack.scrollTo({ left: gmLeft(i), behavior: gmReduce.matches ? "auto" : "smooth" });
+      gmMark(i);
+    };
+
+    // Slide aktif = slide yang tengahnya paling dekat dengan tengah track
+    gmTrack.addEventListener("scroll", function () {
+      if (gmRaf) return;
+      gmRaf = window.requestAnimationFrame(function () {
+        gmRaf = 0;
+        var mid = gmTrack.scrollLeft + gmTrack.clientWidth / 2, best = 0, bestD = Infinity;
+        gmSlides.forEach(function (s, n) {
+          var d = Math.abs(s.offsetLeft + s.offsetWidth / 2 - mid);
+          if (d < bestD) { bestD = d; best = n; }
+        });
+        if (best !== gmIndex) gmMark(best);
+      });
+    }, { passive: true });
+
+    var gmSchedule = function () {
+      window.clearTimeout(gmTimer);
+      if (gmPlaying && !gmHold && !document.hidden && gm.offsetParent !== null) {
+        gmTimer = window.setTimeout(function () { gmGo(gmIndex + 1); gmSchedule(); }, gmMs);
+      }
+    };
+
+    var gmSync = function () {
+      gm.classList.toggle("is-paused", !gmPlaying);
+      gmPlay.setAttribute("aria-label", gmPlaying ? "Jeda galeri" : "Putar galeri");
+      gmTrack.setAttribute("aria-live", gmPlaying ? "off" : "polite");
+    };
+
+    gmPlay.addEventListener("click", function () { gmPlaying = !gmPlaying; gmSync(); gmSchedule(); });
+    if (gmMs <= 0) gmPlay.hidden = true;
+
+    var gmPause = function () { gmHold = true; gmSchedule(); };
+    var gmResume = function () { gmHold = false; gmSchedule(); };
+    gm.addEventListener("touchstart", gmPause, { passive: true });
+    gm.addEventListener("touchend", gmResume, { passive: true });
+    gm.addEventListener("touchcancel", gmResume, { passive: true });
+    gm.addEventListener("focusin", gmPause);
+    gm.addEventListener("focusout", gmResume);
+
+    document.addEventListener("visibilitychange", gmSchedule);
+    listen(phoneQuery, gmSchedule);
+
+    // Putar layar/ubah ukuran: sejajarkan ulang slide aktif tanpa animasi
+    window.addEventListener("resize", function () {
+      window.clearTimeout(gmResize);
+      gmResize = window.setTimeout(function () { gmTrack.scrollLeft = gmLeft(gmIndex); }, 150);
+    });
+
+    gmMark(0);
+    gmSync();
+    gmSchedule();
   }
 
 
